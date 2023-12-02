@@ -36,6 +36,7 @@ import androidx.lifecycle.AndroidViewModel;
 import org.proninyaroslav.libretorrent.R;
 import org.proninyaroslav.libretorrent.core.RepositoryHelper;
 import org.proninyaroslav.libretorrent.core.exception.UnknownUriException;
+import org.proninyaroslav.libretorrent.core.logger.Logger;
 import org.proninyaroslav.libretorrent.core.model.TorrentEngine;
 import org.proninyaroslav.libretorrent.core.model.TorrentInfoProvider;
 import org.proninyaroslav.libretorrent.core.model.data.AdvancedTorrentInfo;
@@ -58,6 +59,7 @@ import org.proninyaroslav.libretorrent.core.system.FileSystemFacade;
 import org.proninyaroslav.libretorrent.core.system.SystemFacadeHelper;
 import org.proninyaroslav.libretorrent.core.utils.TorrentContentFileTreeUtils;
 import org.proninyaroslav.libretorrent.core.utils.Utils;
+import org.proninyaroslav.libretorrent.ui.play.PlayerActivty;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -358,6 +360,12 @@ public class DetailTorrentViewModel extends AndroidViewModel {
         engine.pauseResumeTorrent(torrentId);
     }
 
+    public void resumeIfPausedTorrent()
+    {
+        engine.resumeIfPausedTorrent(torrentId);
+    }
+
+
     public void deleteTorrent(boolean withFiles) {
         engine.deleteTorrents(Collections.singletonList(torrentId), withFiles);
     }
@@ -395,7 +403,21 @@ public class DetailTorrentViewModel extends AndroidViewModel {
         engine.setDownloadSpeedLimit(torrentId, downloadSpeedLimit);
     }
 
-    public Intent makeOpenFileIntent(@NonNull String fileName, @NonNull Uri path) {
+    public Intent makeOpenFileIntent(@NonNull String fileName, @NonNull Uri path)
+    {
+        String extension = fs.getExtension(fileName);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        TorrentContentFileTree node = curDir.getChild(fileName);
+
+        if (node != null && mimeType != null && (mimeType.startsWith("video") || mimeType.startsWith("audio"))) {
+            return makeOpenFileInBuiltInPlayerIntent(fileName, path);
+        } else {
+            return makeOpenFileNotInBuiltInPlayerIntent(fileName, path);
+        }
+    }
+
+    public Intent makeOpenFileNotInBuiltInPlayerIntent(@NonNull String fileName, @NonNull Uri path)
+    {
         String extension = fs.getExtension(fileName);
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         /* If MIME type is unknown, give user a choice than to open file */
@@ -408,6 +430,22 @@ public class DetailTorrentViewModel extends AndroidViewModel {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         return Intent.createChooser(intent, getApplication().getString(R.string.open_using));
+    }
+
+    public Intent makeOpenFileInBuiltInPlayerIntent(@NonNull String fileName, @NonNull Uri path)
+    {
+        TorrentContentFileTree node = curDir.getChild(fileName);
+
+        Context context = getApplication();
+        if (node.getReceivedBytes() == node.size()) {
+            return PlayerActivty.Companion.getIntent(context, path, null, false, 0);
+        } else {
+            /* Downloading file */
+            String url = getStreamUrl(node.getIndex());;
+            resumeIfPausedTorrent();
+            Uri file_uri = Uri.parse(url);
+            return PlayerActivty.Companion.getIntent(context, file_uri, null, false, 0);
+        }
     }
 
     private Priority[] getFilePriorities() {

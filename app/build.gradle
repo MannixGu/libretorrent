@@ -1,14 +1,15 @@
 import com.android.build.OutputFile
 
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace 'org.proninyaroslav.libretorrent'
-    compileSdkVersion 33
+    compileSdkVersion 34
     defaultConfig {
         applicationId 'org.proninyaroslav.libretorrent'
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 25
         /*
          * Convection:
@@ -175,4 +176,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.leinardi.android:speed-dial:3.3.0'
     implementation 'net.java.dev.jna:jna:5.13.0@aar'
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
 }

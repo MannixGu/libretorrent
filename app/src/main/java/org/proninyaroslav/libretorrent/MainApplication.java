@@ -37,9 +37,15 @@ import org.proninyaroslav.libretorrent.ui.errorreport.ErrorReportActivity;
 public class MainApplication extends MultiDexApplication {
     public static final String TAG = MainApplication.class.getSimpleName();
 
+    public static MainApplication mainAppInstance;
+
     static {
         /* Vector Drawable support in ImageView for API < 21 */
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
+    public MainApplication() {
+        mainAppInstance = this;
     }
 
     @Override

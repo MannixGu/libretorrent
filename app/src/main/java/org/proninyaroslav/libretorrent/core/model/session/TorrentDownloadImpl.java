@@ -24,6 +24,7 @@ import static org.proninyaroslav.libretorrent.core.model.data.TorrentInfo.MAX_ET
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -60,6 +61,7 @@ import org.libtorrent4j.swig.libtorrent;
 import org.libtorrent4j.swig.libtorrent_errors;
 import org.libtorrent4j.swig.peer_info_vector;
 import org.libtorrent4j.swig.torrent_handle;
+import org.proninyaroslav.libretorrent.core.FileInTorrent;
 import org.proninyaroslav.libretorrent.core.exception.DecodeException;
 import org.proninyaroslav.libretorrent.core.exception.FreeSpaceException;
 import org.proninyaroslav.libretorrent.core.exception.UnknownUriException;
@@ -76,6 +78,7 @@ import org.proninyaroslav.libretorrent.core.model.stream.TorrentStream;
 import org.proninyaroslav.libretorrent.core.storage.TorrentRepository;
 import org.proninyaroslav.libretorrent.core.system.FileSystemFacade;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,6 +147,8 @@ class TorrentDownloadImpl implements TorrentDownload
     private boolean resumeDataRejected;
     private boolean hasMissingFiles;
     private boolean hasFirstLastPiecePriority;
+
+    private boolean needStartStreamOnAdded = false;
 
     public TorrentDownloadImpl(SessionManager sessionManager,
                                TorrentRepository repo,
@@ -1564,6 +1569,66 @@ class TorrentDownloadImpl implements TorrentDownload
 
         th.readPiece(pieceIndex);
     }
+
+
+    public File getFile(int fileIndex)
+    {
+        return new File(th.savePath() + "/" + th.torrentFile().files().filePath(fileIndex));
+    }
+
+    @Override
+    public FileInTorrent getFirstMediaFile()
+    {
+        TorrentInfo ti = th.torrentFile();
+
+        FileStorage tfs = ti.files();
+        for (int i = 0; i < tfs.numFiles(); i++) {
+            String fileName = tfs.fileName(i);
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String fileMime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+            if (fileMime != null && (fileMime.startsWith("video") || fileMime.startsWith("audio"))) {
+                long[] progress = th.fileProgress();
+                boolean isDownloaded = true;
+                if (i < progress.length) {
+                    long fileSize = tfs.fileSize(i);
+                    if (progress[i] < fileSize)
+                        isDownloaded = false;
+                }
+                return new FileInTorrent(getFile(i), id, i, isDownloaded);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean torrentHasMediaFile()
+    {
+        TorrentInfo ti = th.torrentFile();
+        if (ti != null) {
+            FileStorage fs = ti.files();
+            for (int i = 0; i < fs.numFiles(); i++) {
+                String fileName = fs.fileName(i);
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                String fileMime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+                if (fileMime != null && (fileMime.startsWith("video") || fileMime.startsWith("audio")))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isNeedStartStreamOnAdded()
+    {
+        return needStartStreamOnAdded;
+    }
+
+    @Override
+    public void setNeedStartStreamOnAdded(boolean needStartStreamOnAdded)
+    {
+        this.needStartStreamOnAdded = needStartStreamOnAdded;
+    }
+
 
     /*
      * Set the bytes of the selected file that you're interested in

@@ -31,6 +31,7 @@ import androidx.core.util.Pair;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.proninyaroslav.libretorrent.R;
+import org.proninyaroslav.libretorrent.core.FileInTorrent;
 import org.proninyaroslav.libretorrent.core.RepositoryHelper;
 import org.proninyaroslav.libretorrent.core.TorrentFileObserver;
 import org.proninyaroslav.libretorrent.core.exception.DecodeException;
@@ -549,6 +550,24 @@ public class TorrentEngine
                 }));
     }
 
+    public void resumeIfPausedTorrent(@NonNull String id)
+    {
+        disposables.add(Completable.fromRunnable(() -> {
+                    TorrentDownload task = session.getTask(id);
+                    if (task == null)
+                        return;
+                    try {
+                        if (task.isPaused())
+                            task.resumeManually();
+
+                    } catch (Exception e) {
+                        /* Ignore */
+                    }
+
+                }).subscribeOn(Schedulers.io())
+                .subscribe());
+    }
+
     public void forceAnnounceTorrents(@NonNull List<String> ids)
     {
         disposables.add(Observable.fromIterable(ids)
@@ -609,6 +628,52 @@ public class TorrentEngine
         TorrentDownload task = session.getTask(id);
         if (task != null)
             task.addTrackers(new HashSet<>(urls));
+    }
+
+
+    public FileInTorrent getFirstMediaFile(String id)
+    {
+        if (!isRunning())
+            return null;
+
+        if (id == null)
+            return null;
+
+        TorrentDownload task = session.getTask(id);
+        if (task != null)
+            return task.getFirstMediaFile();
+
+        return null;
+    }
+
+    public boolean torrentHasMediaFile(String id)
+    {
+        if (!isRunning())
+            return false;
+
+        if (id == null)
+            return false;
+
+        TorrentDownload task = session.getTask(id);
+        if (task == null)
+            return false;
+
+        return task.torrentHasMediaFile();
+    }
+
+    public boolean isTorrentNeedStartStreamOnAdded(String id)
+    {
+        if (!isRunning())
+            return false;
+
+        if (id == null)
+            return false;
+
+        TorrentDownload task = session.getTask(id);
+        if (task == null)
+            return false;
+
+        return task.isNeedStartStreamOnAdded();
     }
 
     public String makeMagnet(@NonNull String id, boolean includePriorities)
@@ -1131,6 +1196,7 @@ public class TorrentEngine
         String hostname = pref.streamingHostname();
         int port = pref.streamingPort();
 
+        Log.i(TAG, "Starting streaming server on " + hostname + ":" + port);
         torrentStreamServer = new TorrentStreamServer(hostname, port);
         try {
             torrentStreamServer.start(appContext);

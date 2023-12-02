@@ -23,6 +23,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import org.proninyaroslav.libretorrent.core.FileInTorrent;
 import org.proninyaroslav.libretorrent.core.exception.DecodeException;
 import org.proninyaroslav.libretorrent.core.model.data.PeerInfo;
 import org.proninyaroslav.libretorrent.core.model.data.Priority;
@@ -178,6 +179,14 @@ public interface TorrentDownload
     boolean havePiece(int pieceIndex);
 
     void readPiece(int pieceIndex);
+
+    FileInTorrent getFirstMediaFile();
+
+    boolean torrentHasMediaFile();
+
+    boolean isNeedStartStreamOnAdded();
+
+    void setNeedStartStreamOnAdded(boolean needStartStreamOnAdded);
 
     void setInterestedPieces(@NonNull TorrentStream stream, int startPiece, int numPieces);
 

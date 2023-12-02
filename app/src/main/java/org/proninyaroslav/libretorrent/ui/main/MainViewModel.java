@@ -26,10 +26,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
+import org.proninyaroslav.libretorrent.core.FileInTorrent;
 import org.proninyaroslav.libretorrent.core.RepositoryHelper;
 import org.proninyaroslav.libretorrent.core.filter.TorrentFilter;
 import org.proninyaroslav.libretorrent.core.filter.TorrentFilterCollection;
 import org.proninyaroslav.libretorrent.core.model.TorrentEngine;
+import org.proninyaroslav.libretorrent.core.model.TorrentEngineListener;
 import org.proninyaroslav.libretorrent.core.model.TorrentInfoProvider;
 import org.proninyaroslav.libretorrent.core.model.data.TorrentInfo;
 import org.proninyaroslav.libretorrent.core.model.data.entity.TagInfo;
@@ -185,5 +187,31 @@ public class MainViewModel extends AndroidViewModel {
 
     public Completable deleteTag(@NonNull TagInfo info) {
         return Completable.fromRunnable(() -> tagRepo.delete(info));
+    }
+
+
+    public FileInTorrent getFirstMediaFile(String id)
+    {
+        return engine.getFirstMediaFile(id);
+    }
+
+    public boolean torrentHasMediaFile(String id)
+    {
+        return engine.torrentHasMediaFile(id);
+    }
+
+    public boolean isTorrentNeedStartStreamOnAdded(String id)
+    {
+        return engine.isTorrentNeedStartStreamOnAdded(id);
+    }
+
+    public void addListener(TorrentEngineListener listener)
+    {
+        engine.addListener(listener);
+    }
+
+    public void removeListener(TorrentEngineListener listener)
+    {
+        engine.removeListener(listener);
     }
 }
