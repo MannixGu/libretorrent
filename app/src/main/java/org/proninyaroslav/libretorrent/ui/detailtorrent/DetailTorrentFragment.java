@@ -164,7 +164,7 @@ public class DetailTorrentFragment extends Fragment
         /* Remove previous data if fragment changed */
         if (Utils.isTwoPane(activity))
             viewModel.clearData();
-        viewModel.setTorrentId(torrentId);
+        viewModel.setTorrentId(torrentId);//todo 点击进入的种子id
         msgViewModel = provider.get(MsgDetailTorrentViewModel.class);
 
         if (Utils.isTwoPane(activity)) {

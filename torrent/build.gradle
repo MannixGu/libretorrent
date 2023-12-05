@@ -1,0 +1,63 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.xm.cine.torrent'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 24
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        encoding 'UTF-8'
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+
+
+    def ROOM_VERSION = '2.5.0'
+    implementation "androidx.room:room-rxjava2:$ROOM_VERSION"
+    implementation "androidx.room:room-runtime:$ROOM_VERSION"
+    annotationProcessor "androidx.room:room-compiler:$ROOM_VERSION" /* For schemas import */
+
+    /* libtorrent wrapper */
+    def LIBTORRENT4J_VERSION = '2.1.0-27'
+    implementation "org.libtorrent4j:libtorrent4j:$LIBTORRENT4J_VERSION"
+    implementation "org.libtorrent4j:libtorrent4j-android-arm:$LIBTORRENT4J_VERSION"
+    implementation "org.libtorrent4j:libtorrent4j-android-arm64:$LIBTORRENT4J_VERSION"
+    implementation "org.libtorrent4j:libtorrent4j-android-x86:$LIBTORRENT4J_VERSION"
+    implementation "org.libtorrent4j:libtorrent4j-android-x86_64:$LIBTORRENT4J_VERSION"
+
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'com.github.anthonynsimon:jurl:v0.4.2'
+    implementation 'commons-io:commons-io:2.5'
+    implementation 'net.java.dev.jna:jna:5.13.0@aar'
+}

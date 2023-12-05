@@ -75,6 +75,7 @@ import io.reactivex.schedulers.Schedulers;
  * The fragment for list files of torrent. Part of DetailTorrentFragment.
  */
 
+//todo 文件列表页面
 public class DetailTorrentFilesFragment extends Fragment
         implements TorrentContentFilesAdapter.ClickListener
 {
@@ -162,7 +163,7 @@ public class DetailTorrentFilesFragment extends Fragment
                 )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((children) -> {
-                    adapter.submitList(children);
+                    adapter.submitList(children);//todo 设置文件列表
                     updateFileSize();
                 }));
     }
@@ -524,7 +525,7 @@ public class DetailTorrentFilesFragment extends Fragment
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
     }
 
-    private void openFile(String fileName, Uri path)
+    private void openFile(String fileName, Uri path)//todo 打开文件
     {
         if (fileName == null || path == null)
             return;

@@ -17,7 +17,7 @@
  * along with LibreTorrent.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.proninyaroslav.libretorrent.core.system;
+package com.xm.cine.torrent.core.system;
 
 import android.content.Context;
 import android.net.Uri;
@@ -29,8 +29,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.apache.commons.io.IOUtils;
-import org.proninyaroslav.libretorrent.core.exception.UnknownUriException;
-import org.proninyaroslav.libretorrent.core.utils.Utils;
+
+import com.xm.cine.torrent.core.exception.UnknownUriException;
+import com.xm.cine.torrent.core.utils.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,8 +41,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-class FileSystemFacadeImpl implements FileSystemFacade
-{
+class FileSystemFacadeImpl implements FileSystemFacade {
     private static final String TAG = FileSystemFacadeImpl.class.getSimpleName();
 
     private static final String EXTENSION_SEPARATOR = ".";
@@ -51,23 +51,20 @@ class FileSystemFacadeImpl implements FileSystemFacade
     private FsModuleResolver fsResolver;
 
     public FileSystemFacadeImpl(@NonNull Context appContext,
-                                @NonNull FsModuleResolver fsResolver)
-    {
+                                @NonNull FsModuleResolver fsResolver) {
         this.appContext = appContext;
         this.fsResolver = fsResolver;
     }
 
     @Override
-    public FileDescriptorWrapper getFD(@NonNull Uri path) throws UnknownUriException
-    {
+    public FileDescriptorWrapper getFD(@NonNull Uri path) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(path);
 
         return fsModule.openFD(path);
     }
 
     @Override
-    public String getExtensionSeparator()
-    {
+    public String getExtensionSeparator() {
         return EXTENSION_SEPARATOR;
     }
 
@@ -98,8 +95,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
 
     @Override
     @Nullable
-    public String getUserDirPath()
-    {
+    public String getUserDirPath() {
         String path = appContext.getExternalFilesDir("UserDir").getAbsolutePath();
         if (Utils.hasManageExternalStoragePermission(appContext)) {
             path = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -113,8 +109,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
     }
 
     @Override
-    public boolean deleteFile(@NonNull Uri path) throws FileNotFoundException, UnknownUriException
-    {
+    public boolean deleteFile(@NonNull Uri path) throws FileNotFoundException, UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(path);
 
         return fsModule.delete(path);
@@ -126,8 +121,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
 
     @Override
     public Uri getFileUri(@NonNull Uri dir,
-                          @NonNull String fileName) throws UnknownUriException
-    {
+                          @NonNull String fileName) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(dir);
 
         Uri path = null;
@@ -148,24 +142,21 @@ class FileSystemFacadeImpl implements FileSystemFacade
 
     @Override
     public Uri getFileUri(@NonNull String relativePath,
-                          @NonNull Uri dir) throws UnknownUriException
-    {
+                          @NonNull Uri dir) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(dir);
 
         return fsModule.getFileUri(relativePath, dir);
     }
 
     @Override
-    public boolean fileExists(@NonNull Uri filePath) throws UnknownUriException
-    {
+    public boolean fileExists(@NonNull Uri filePath) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(filePath);
 
         return fsModule.fileExists(filePath);
     }
 
     @Override
-    public long lastModified(@NonNull Uri filePath) throws UnknownUriException
-    {
+    public long lastModified(@NonNull Uri filePath) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(filePath);
 
         return fsModule.lastModified(filePath);
@@ -176,8 +167,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public boolean isStorageWritable()
-    {
+    public boolean isStorageWritable() {
         String state = Environment.getExternalStorageState();
 
         return Environment.MEDIA_MOUNTED.equals(state);
@@ -188,8 +178,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public boolean isStorageReadable()
-    {
+    public boolean isStorageReadable() {
         String state = Environment.getExternalStorageState();
 
         return Environment.MEDIA_MOUNTED.equals(state) ||
@@ -204,8 +193,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
     @Override
     public Uri createFile(@NonNull Uri dir,
                           @NonNull String fileName,
-                          boolean replace) throws IOException, UnknownUriException
-    {
+                          boolean replace) throws IOException, UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(dir);
         try {
             Uri path = fsModule.getFileUri(dir, fileName, false);
@@ -225,8 +213,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
 
     @Override
     public void write(@NonNull byte[] data,
-                      @NonNull Uri destFile) throws IOException, UnknownUriException
-    {
+                      @NonNull Uri destFile) throws IOException, UnknownUriException {
         try (FileDescriptorWrapper w = getFD(destFile)) {
             try (FileOutputStream fout = new FileOutputStream(w.open("rw"))) {
                 IOUtils.write(data, fout);
@@ -237,8 +224,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
     @Override
     public void write(@NonNull CharSequence data,
                       @NonNull Charset charset,
-                      @NonNull Uri destFile) throws IOException, UnknownUriException
-    {
+                      @NonNull Uri destFile) throws IOException, UnknownUriException {
         try (FileDescriptorWrapper w = getFD(destFile)) {
             try (FileOutputStream fout = new FileOutputStream(w.open("rw"))) {
                 IOUtils.write(data, fout, charset);
@@ -251,15 +237,13 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public String makeFileSystemPath(@NonNull Uri uri) throws UnknownUriException
-    {
+    public String makeFileSystemPath(@NonNull Uri uri) throws UnknownUriException {
         return makeFileSystemPath(uri, null);
     }
 
     @Override
     public String makeFileSystemPath(@NonNull Uri uri,
-                                     String relativePath) throws UnknownUriException
-    {
+                                     String relativePath) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(uri);
 
         return fsModule.makeFileSystemPath(uri, relativePath);
@@ -271,8 +255,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public long getDirAvailableBytes(@NonNull Uri dir) throws UnknownUriException
-    {
+    public long getDirAvailableBytes(@NonNull Uri dir) throws UnknownUriException {
         long availableBytes = -1;
 
         FsModule fsModule = fsResolver.resolveFsByUri(dir);
@@ -288,8 +271,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
     }
 
     @Override
-    public File getTempDir()
-    {
+    public File getTempDir() {
         File tmpDir = new File(appContext.getExternalFilesDir(null), TEMP_DIR);
         if (!tmpDir.exists())
             if (!tmpDir.mkdirs())
@@ -299,8 +281,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
     }
 
     @Override
-    public void cleanTempDir() throws IOException
-    {
+    public void cleanTempDir() throws IOException {
         File tmpDir = getTempDir();
         if (tmpDir == null)
             throw new FileNotFoundException("Temp dir not found");
@@ -309,14 +290,12 @@ class FileSystemFacadeImpl implements FileSystemFacade
     }
 
     @Override
-    public File makeTempFile(@NonNull String postfix)
-    {
+    public File makeTempFile(@NonNull String postfix) {
         return new File(getTempDir(), UUID.randomUUID().toString() + postfix);
     }
 
     @Override
-    public String getExtension(String fileName)
-    {
+    public String getExtension(String fileName) {
         if (fileName == null)
             return null;
 
@@ -335,8 +314,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public boolean isValidFatFilename(String name)
-    {
+    public boolean isValidFatFilename(String name) {
         return name != null && name.equals(buildValidFatFilename(name));
     }
 
@@ -346,8 +324,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public String buildValidFatFilename(String name)
-    {
+    public String buildValidFatFilename(String name) {
         if (TextUtils.isEmpty(name) || ".".equals(name) || "..".equals(name))
             return "(invalid)";
 
@@ -368,8 +345,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
         return res.toString();
     }
 
-    private boolean isValidFatFilenameChar(char c)
-    {
+    private boolean isValidFatFilenameChar(char c) {
         if ((0x00 <= c && c <= 0x1f))
             return false;
         switch (c) {
@@ -389,8 +365,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
         }
     }
 
-    private void trimFilename(StringBuilder res, int maxBytes)
-    {
+    private void trimFilename(StringBuilder res, int maxBytes) {
         byte[] raw = res.toString().getBytes(StandardCharsets.UTF_8);
         if (raw.length > maxBytes) {
             maxBytes -= 3;
@@ -407,8 +382,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public String normalizeFileSystemPath(String path)
-    {
+    public String normalizeFileSystemPath(String path) {
         return (TextUtils.isEmpty(path) ||
                 path.startsWith("file://") ||
                 path.startsWith("content://") ?
@@ -421,8 +395,7 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public String getDirPath(@NonNull Uri dir) throws UnknownUriException
-    {
+    public String getDirPath(@NonNull Uri dir) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(dir);
 
         return fsModule.getDirPath(dir);
@@ -433,16 +406,14 @@ class FileSystemFacadeImpl implements FileSystemFacade
      */
 
     @Override
-    public String getFilePath(@NonNull Uri filePath) throws UnknownUriException
-    {
+    public String getFilePath(@NonNull Uri filePath) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(filePath);
 
         return fsModule.getFilePath(filePath);
     }
 
     @Override
-    public Uri getParentDirUri(@NonNull Uri filePath) throws UnknownUriException
-    {
+    public Uri getParentDirUri(@NonNull Uri filePath) throws UnknownUriException {
         FsModule fsModule = fsResolver.resolveFsByUri(filePath);
 
         return fsModule.getParentDirUri(filePath);

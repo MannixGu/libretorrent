@@ -338,6 +338,7 @@ public class DetailTorrentViewModel extends AndroidViewModel {
     }
 
     public String getStreamUrl(int fileIndex) {
+        //todo 获取文件流
         String hostname = pref.streamingHostname();
         int port = pref.streamingPort();
 
@@ -437,6 +438,7 @@ public class DetailTorrentViewModel extends AndroidViewModel {
         TorrentContentFileTree node = curDir.getChild(fileName);
 
         Context context = getApplication();
+        //todo 两种文件类型
         if (node.getReceivedBytes() == node.size()) {
             return PlayerActivty.Companion.getIntent(context, path, null, false, 0);
         } else {
@@ -586,7 +588,7 @@ public class DetailTorrentViewModel extends AndroidViewModel {
             for (Priority p : ti.filePriorities)
                 priorities.add(new FilePriority(p));
 
-            Pair<TorrentContentFileTree, TorrentContentFileTree[]> res = TorrentContentFileTreeUtils.buildFileTree(files);
+            Pair<TorrentContentFileTree, TorrentContentFileTree[]> res = TorrentContentFileTreeUtils.buildFileTree(files); //todo 转换种子文件信息
             TorrentContentFileTree fileTree = res.first;
             treeLeaves = res.second;
 

@@ -133,7 +133,7 @@ public class MainFragment extends Fragment
         msgViewModel = provider.get(MsgMainViewModel.class);
         dialogViewModel = provider.get(BaseAlertDialog.SharedViewModel.class);
 
-        adapter = new TorrentListAdapter(this);
+        adapter = new TorrentListAdapter(this);//todo 下载的种子信息list adapter
         /*
          * A RecyclerView by default creates another copy of the ViewHolder in order to
          * fade the views into each other. This causes the problem because the old ViewHolder gets
@@ -342,6 +342,7 @@ public class MainFragment extends Fragment
                                 .toList()
                 )
                 .observeOn(AndroidSchedulers.mainThread())
+                //todo 获取种子列表
                 .subscribe(adapter::submitList,
                         (Throwable t) -> Log.e(TAG, "Getting torrent info list error: " +
                                 Log.getStackTraceString(t)));
@@ -380,13 +381,13 @@ public class MainFragment extends Fragment
     {
         if (Utils.isTwoPane(activity))
             adapter.markAsOpen(item);
-        msgViewModel.torrentDetailsOpened(item.torrentId);
+        msgViewModel.torrentDetailsOpened(item.torrentId);//todo 打开一个种子
     }
 
     @Override
     public void onItemPauseClicked(@NonNull TorrentListItem item)
     {
-        viewModel.pauseResumeTorrent(item.torrentId);
+        viewModel.pauseResumeTorrent(item.torrentId); //todo 暂停一个种子下载
     }
 
     @Override

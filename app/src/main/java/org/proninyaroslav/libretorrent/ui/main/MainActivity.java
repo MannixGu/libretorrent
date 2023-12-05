@@ -669,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         } else {
             Intent i = new Intent(this, DetailTorrentActivity.class);
             i.putExtra(DetailTorrentActivity.TAG_TORRENT_ID, id);
+            i.setAction(DetailTorrentActivity.ACTION_OPEN_FILES);
             startActivity(i);
         }
     }

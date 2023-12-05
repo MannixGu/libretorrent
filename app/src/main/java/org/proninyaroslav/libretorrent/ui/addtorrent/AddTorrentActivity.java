@@ -302,7 +302,7 @@ public class AddTorrentActivity extends AppCompatActivity
         ).attach();
     }
 
-    private void observeDecodeState()
+    private void observeDecodeState() //todo 添加解析种子信息
     {
         viewModel.getDecodeState().observe(this, (state) -> {
             switch (state.status) {
@@ -359,7 +359,7 @@ public class AddTorrentActivity extends AppCompatActivity
             return i.getParcelableExtra(TAG_URI);
     }
 
-    private void addTorrent()
+    private void addTorrent()//todo 真正添加下载
     {
         String name = viewModel.mutableParams.getName();
         if (TextUtils.isEmpty(name)) {
