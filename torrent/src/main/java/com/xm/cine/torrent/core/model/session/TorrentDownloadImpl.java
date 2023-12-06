@@ -23,7 +23,7 @@ import static com.xm.cine.torrent.core.model.data.TorrentInfo.MAX_ETA;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
@@ -498,7 +498,7 @@ class TorrentDownloadImpl implements TorrentDownload {
 
         } catch (Exception e) {
             Log.w(TAG, "Error triggering resume data of " + id + ":");
-            Log.w(TAG, Log.getStackTraceString(e));
+            Log.w(TAG, e);
 
             criticalWork.setSaveResume(false);
         }
@@ -510,7 +510,7 @@ class TorrentDownloadImpl implements TorrentDownload {
             repo.addFastResume(new FastResume(id, Vectors.byte_vector2bytes(data)));
 
         } catch (Throwable e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
         } finally {
             criticalWork.setSaveResume(false);
@@ -549,7 +549,7 @@ class TorrentDownloadImpl implements TorrentDownload {
                             },
                             (err) -> {
                                 Log.e(TAG, "Error waiting for critical work: "
-                                        + Log.getStackTraceString(err));
+                                        + err);
                                 if (!emitter.isDisposed()) {
                                     doStop();
                                     emitter.onComplete();
@@ -1175,7 +1175,7 @@ class TorrentDownloadImpl implements TorrentDownload {
             th.moveStorage(pathStr, MoveFlags.ALWAYS_REPLACE_FILES);
         } catch (Exception e) {
             Log.e(TAG, "Error changing save path: ");
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
         }
     }
 
@@ -1239,7 +1239,7 @@ class TorrentDownloadImpl implements TorrentDownload {
             return fs.getFileUri(torrent.downloadPath, "." + ti.infoHash() + ".parts");
         } catch (Exception e) {
             Log.e(TAG, "Error changing save path: ");
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
             return null;
         }
     }

@@ -20,7 +20,7 @@
 package com.xm.cine.torrent.core.model;
 
 import android.content.Context;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 
@@ -329,7 +329,7 @@ public class TorrentInfoProvider {
                                 }
                             },
                             (Throwable t) -> Log.e(TAG, "Getting advanced info for torrent " + id + " error: " +
-                                    Log.getStackTraceString(t)));
+                                    t));
 
             if (!emitter.isCancelled()) {
                 Thread t = new Thread(() -> {
@@ -364,7 +364,7 @@ public class TorrentInfoProvider {
                                 }
                             },
                             (Throwable t) -> Log.e(TAG, "Getting trackers info for torrent " + id + " error: " +
-                                    Log.getStackTraceString(t)));
+                                    t));
 
             if (!emitter.isCancelled()) {
                 Thread t = new Thread(() -> {
@@ -397,7 +397,7 @@ public class TorrentInfoProvider {
                                 }
                             },
                             (Throwable t) -> Log.e(TAG, "Getting peers info for torrent " + id + " error: " +
-                                    Log.getStackTraceString(t)));
+                                    t));
 
             if (!emitter.isCancelled()) {
                 Thread t = new Thread(() -> {
@@ -429,7 +429,7 @@ public class TorrentInfoProvider {
                                 }
                             },
                             (Throwable t) -> Log.e(TAG, "Getting pieces for torrent " + id + " error: " +
-                                    Log.getStackTraceString(t)));
+                                    t));
 
             if (!emitter.isCancelled()) {
                 Thread t = new Thread(() -> {

@@ -21,7 +21,7 @@ package com.xm.cine.torrent.core.model.session;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 
@@ -401,7 +401,7 @@ public class TorrentSessionImpl extends SessionManager
                 path = fs.makeFileSystemPath(torrent.downloadPath);
             } catch (UnknownUriException e) {
                 Log.e(TAG, "Unable to restore torrent:");
-                Log.e(TAG, Log.getStackTraceString(e));
+                Log.e(TAG, e);
             }
             LoadTorrentTask loadTask = new LoadTorrentTask(torrent.id);
             if (path != null && torrent.isDownloadingMetadata()) {
@@ -837,7 +837,7 @@ public class TorrentSessionImpl extends SessionManager
                         this::handleStoppingTasks,
                         (err) -> {
                             Log.e(TAG, "Error stopping torrents: " +
-                                    Log.getStackTraceString(err));
+                                    err);
                             handleStoppingTasks();
                         }
                 ));
@@ -1113,7 +1113,7 @@ public class TorrentSessionImpl extends SessionManager
 
         } catch (Exception e) {
             Log.e(TAG, "Error loading session state: ");
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
             return new SessionParams(defaultSettingsPack());
         }
@@ -1129,7 +1129,7 @@ public class TorrentSessionImpl extends SessionManager
 
         } catch (Exception e) {
             Log.e(TAG, "Error saving session state: ");
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
         }
     }
 
@@ -1340,7 +1340,7 @@ public class TorrentSessionImpl extends SessionManager
             task = restoreTorrentsQueue.poll();
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
             return;
         }

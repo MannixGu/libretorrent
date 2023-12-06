@@ -22,10 +22,12 @@ package com.xm.cine.torrent.core.model;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
+
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.core.util.Pair;
 
 import com.xm.cine.torrent.core.FileInTorrent;
@@ -233,8 +235,7 @@ public class TorrentEngine {
                 .subscribe(
                         this::handleAutoStop,
                         (err) -> {
-                            Log.e(TAG, "Auto stop error: " +
-                                    Log.getStackTraceString(err));
+                            Log.e(TAG, "Auto stop error: ", err);
                             handleAutoStop();
                         }
                 ));
@@ -442,7 +443,7 @@ public class TorrentEngine {
             info = new TorrentMetaInfo(bencode);
 
         } catch (DecodeException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
             if (!emitter.isDisposed())
                 emitter.onError(e);
             return;
@@ -626,6 +627,21 @@ public class TorrentEngine {
         return task.isNeedStartStreamOnAdded();
     }
 
+    public String getFileOrStreamUrl(FileInTorrent mediaFile) {
+        if (mediaFile == null)
+            return null;
+
+        if (mediaFile.getIsDownloaded()) {
+            Uri fileUri = FileProvider.getUriForFile(appContext, appContext.getPackageName() + ".provider", mediaFile.getFile());
+            return fileUri.toString();
+        } else {
+            String url = getStreamUrl(mediaFile);
+
+            resumeIfPausedTorrent(mediaFile.getTorrentID());
+            return url;
+        }
+    }
+
     public String getStreamUrl(FileInTorrent mediaFile) {
         if (mediaFile == null)
             return null;
@@ -694,7 +710,7 @@ public class TorrentEngine {
 
         } catch (DecodeException e) {
             Log.e(TAG, "Can't decode torrent info: ");
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
         }
 
         return info;
@@ -1095,7 +1111,7 @@ public class TorrentEngine {
             torrentStreamServer.start(appContext);
 
         } catch (IOException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
         }
     }
 
@@ -1175,7 +1191,7 @@ public class TorrentEngine {
                                             fs.deleteFile(uri);
                                         } catch (IOException | UnknownUriException e) {
                                             Log.w(TAG, "[Watch] Unable to delete file: "
-                                                    + Log.getStackTraceString(e));
+                                                    + e);
                                         }
                                     }
                                 })
@@ -1229,7 +1245,7 @@ public class TorrentEngine {
 //            notifier.makeTorrentInfoNotify(name, appContext.getString(R.string.torrent_exist));
 //            return;
 //        }
-//        Log.e(TAG, Log.getStackTraceString(e));
+//        Log.e(TAG, e);
 //        String message;
 //        if (e instanceof FileNotFoundException)
 //            message = appContext.getString(R.string.error_file_not_found_add_torrent);
@@ -1341,7 +1357,7 @@ public class TorrentEngine {
 //                                }
 //                            },
 //                            (Throwable t) -> Log.e(TAG, "Getting torrent " + id + " error: " +
-//                                    Log.getStackTraceString(t)))
+//                                    e))
 //            );
         }
 
@@ -1360,7 +1376,7 @@ public class TorrentEngine {
 //                                notifier.makeMovingTorrentNotify(name);
 //                            },
 //                            (Throwable t) -> Log.e(TAG, "Getting torrent " + id + " error: " +
-//                                    Log.getStackTraceString(t)))
+//                                    e))
 //            );
         }
 
@@ -1384,7 +1400,7 @@ public class TorrentEngine {
 //                                            appContext.getString(R.string.torrent_move_fail));
 //                            },
 //                            (Throwable t) -> Log.e(TAG, "Getting torrent " + id + " error: " +
-//                                    Log.getStackTraceString(t)))
+//                                    e))
 //            );
         }
 
@@ -1432,7 +1448,7 @@ public class TorrentEngine {
 //                                        appContext.getString(R.string.restore_torrent_error));
 //                            },
 //                            (Throwable t) -> Log.e(TAG, "Getting torrent " + id + " error: " +
-//                                    Log.getStackTraceString(t)))
+//                                    e))
 //            );
         }
 
@@ -1440,7 +1456,7 @@ public class TorrentEngine {
         public void onTorrentMetadataLoaded(@NonNull String id, Exception err) {
             if (err != null) {
                 Log.e(TAG, "Load metadata error: ");
-                Log.e(TAG, Log.getStackTraceString(err));
+                Log.e(TAG, err);
             }
 
             disposables.add(repo.getTorrentByIdSingle(id)
@@ -1456,7 +1472,7 @@ public class TorrentEngine {
 //                                }
                                     },
                                     (Throwable t) -> Log.e(TAG, "Getting torrent " + id + " error: " +
-                                            Log.getStackTraceString(t)))
+                                            t))
             );
 
             if (checkPauseTorrents()) {

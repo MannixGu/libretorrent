@@ -21,7 +21,7 @@ package com.xm.cine.torrent.core.storage;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.migration.Migration;
@@ -172,7 +172,7 @@ class DatabaseMigration
                 advancedMigration(database);
 
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Log.e(TAG, e);
             }
         }
 

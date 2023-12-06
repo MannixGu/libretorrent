@@ -23,7 +23,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,7 +129,7 @@ class FileSystemFacadeImpl implements FileSystemFacade {
             path = fsModule.getFileUri(dir, fileName, false);
 
         } catch (IOException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
         }
 
         return path;
@@ -263,7 +263,7 @@ class FileSystemFacadeImpl implements FileSystemFacade {
             availableBytes = fsModule.getDirAvailableBytes(dir);
 
         } catch (IllegalArgumentException | IOException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
             return availableBytes;
         }
 

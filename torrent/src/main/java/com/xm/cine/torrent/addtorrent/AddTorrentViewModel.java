@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
@@ -353,7 +353,7 @@ public class AddTorrentViewModel {
                             mutableParams.setStorageFreeSpace(fs.getDirAvailableBytes(dirPath));
                             mutableParams.setDirName(fs.getDirPath(dirPath));
                         } catch (UnknownUriException e) {
-                            Log.e(TAG, Log.getStackTraceString(e));
+                            Log.e(TAG, e);
                         }
                     })
                     .subscribeOn(Schedulers.io())

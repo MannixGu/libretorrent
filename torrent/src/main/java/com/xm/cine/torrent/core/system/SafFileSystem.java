@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 import android.util.LruCache;
 
 import androidx.annotation.NonNull;

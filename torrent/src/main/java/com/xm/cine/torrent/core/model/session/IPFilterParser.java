@@ -20,7 +20,7 @@
 package com.xm.cine.torrent.core.model.session;
 
 import android.net.Uri;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 
@@ -63,7 +63,7 @@ class IPFilterParser
             if (!fs.fileExists(path))
                 return ruleCount;
         } catch (UnknownUriException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
             return ruleCount;
         }
 
@@ -79,7 +79,7 @@ class IPFilterParser
                 ruleCount = parseP2P(is, filter);
 
         } catch (IOException | UnknownUriException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
             return ruleCount;
 
         } finally {
@@ -104,7 +104,7 @@ class IPFilterParser
             it = IOUtils.lineIterator(is, "UTF-8");
 
         } catch (IOException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
             return ruleCount;
         }
@@ -188,7 +188,7 @@ class IPFilterParser
             it = IOUtils.lineIterator(is, "UTF-8");
 
         } catch (IOException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
             return ruleCount;
         }

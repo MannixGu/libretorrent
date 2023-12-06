@@ -39,7 +39,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 import android.util.TypedValue;
 import android.view.View;
 

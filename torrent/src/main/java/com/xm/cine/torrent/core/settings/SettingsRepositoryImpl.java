@@ -145,7 +145,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
         /* Streaming settings */
         static final boolean enableStreaming = true;
         static final String streamingHostname = "127.0.0.1";
-        static final int streamingPort = 8800;
+        static final int streamingPort = 12001;
         /* Logging settings */
         static final boolean logging = SessionSettings.DEFAULT_LOGGING;
         static final int maxLogSize = SessionSettings.DEFAULT_MAX_LOG_SIZE;

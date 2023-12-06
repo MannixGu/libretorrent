@@ -2,7 +2,7 @@ package com.xm.cine.torrent
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import com.xm.cine.unit.Log
 import com.xm.cine.torrent.addtorrent.AddTorrentViewModel
 import com.xm.cine.torrent.core.model.TorrentEngine
 import com.xm.cine.torrent.core.model.TorrentEngineListener
@@ -35,13 +35,13 @@ object TorrentStreamManager : TorrentEngineListener() {
 
     fun getFirstTorrentStream(id: String): String? {
         return engine.getFirstMediaFile(id)?.run {
-            engine.getStreamUrl(this)
+            engine.getFileOrStreamUrl(this)
         }
     }
 
     fun getAllTorrentStream(id: String): List<String>? {
         return engine.getAllMediaFile(id)?.map {
-            engine.getStreamUrl(it)
+            engine.getFileOrStreamUrl(it)
         }
     }
 
@@ -56,22 +56,26 @@ object TorrentStreamManager : TorrentEngineListener() {
     private fun observeDecodeState(context: Context, url: String) {
         var uri = Uri.parse(url)
 
+        Log.d(TAG, "observeDecodeState: $uri")
         val addTorrentViewModel = AddTorrentViewModel(context)
         addTorrentViewModel.getDecodeState()
             .observeForever { state: AddTorrentViewModel.DecodeState ->
+                Log.d(TAG, "observeDecodeState: ${state.status}")
                 when (state.status) {
                     AddTorrentViewModel.Status.UNKNOWN -> {
                         if (uri != null) addTorrentViewModel.startDecode(uri)
                     }
 
-                    AddTorrentViewModel.Status.DECODE_TORRENT_FILE, AddTorrentViewModel.Status.FETCHING_HTTP, AddTorrentViewModel.Status.FETCHING_MAGNET ->
+                    AddTorrentViewModel.Status.DECODE_TORRENT_FILE, AddTorrentViewModel.Status.FETCHING_HTTP, AddTorrentViewModel.Status.FETCHING_MAGNET -> {
                         onStartDecode(
                             addTorrentViewModel,
                             state.status == AddTorrentViewModel.Status.DECODE_TORRENT_FILE
                         )
+                    }
 
-                    AddTorrentViewModel.Status.FETCHING_HTTP_COMPLETED, AddTorrentViewModel.Status.DECODE_TORRENT_COMPLETED, AddTorrentViewModel.Status.FETCHING_MAGNET_COMPLETED, AddTorrentViewModel.Status.ERROR ->
+                    AddTorrentViewModel.Status.FETCHING_HTTP_COMPLETED, AddTorrentViewModel.Status.DECODE_TORRENT_COMPLETED, AddTorrentViewModel.Status.FETCHING_MAGNET_COMPLETED, AddTorrentViewModel.Status.ERROR -> {
                         onStopDecode(addTorrentViewModel, state.error)
+                    }
                 }
             }
     }
@@ -98,7 +102,16 @@ object TorrentStreamManager : TorrentEngineListener() {
         listener?.onTorrentStreamReady(id)
     }
 
+    override fun onTorrentLoaded(id: String) {
+        Log.d(TAG, "onTorrentLoaded: $id")
+    }
+
+    override fun onMagnetLoaded(hash: String, bencode: ByteArray?) {
+        Log.d(TAG, "onMagnetLoaded: $hash")
+    }
+
     override fun onTorrentError(id: String, e: Exception?) {
+        Log.d(TAG, "onTorrentError: $id")
         listener?.onTorrentStreamError(id, e)
     }
 }

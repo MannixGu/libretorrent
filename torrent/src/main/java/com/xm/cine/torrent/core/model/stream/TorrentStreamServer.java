@@ -21,7 +21,7 @@ package com.xm.cine.torrent.core.model.stream;
 
 
 import android.content.Context;
-import android.util.Log;
+import com.xm.cine.unit.Log;
 
 import androidx.annotation.NonNull;
 
@@ -251,7 +251,7 @@ public class TorrentStreamServer extends NanoHTTPD
 
             return res;
         } catch (Throwable e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, e);
 
             return newFixedLengthResponse(FORBIDDEN, NanoHTTPD.MIME_PLAINTEXT, "Forbidden");
         }
